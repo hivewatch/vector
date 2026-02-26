@@ -722,6 +722,7 @@ transforms-logs = [
   "transforms-aws_ec2_metadata",
   "transforms-dedupe",
   "transforms-filter",
+  "transforms-graphql_pacs_router",
   "transforms-window",
   "transforms-log_to_metric",
   "transforms-lua",
@@ -750,6 +751,7 @@ transforms-aggregate = []
 transforms-aws_ec2_metadata = ["dep:arc-swap"]
 transforms-dedupe = ["transforms-impl-dedupe"]
 transforms-filter = []
+transforms-graphql_pacs_router = []
 transforms-incremental_to_absolute = []
 transforms-window = []
 transforms-log_to_metric = []

@@ -1,0 +1,117 @@
+<mxfile host="65bd71144e">
+    <diagram name="Vector Pipeline" id="xhMGTSFG1NrV8olQltlH">
+        <mxGraphModel dx="1210" dy="691" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="1300" background="#ffffff" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="src" value="&lt;b&gt;Kinesis Source&lt;/b&gt;&#xa;PACS Events" style="rounded=1;arcSize=20;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" parent="1" vertex="1">
+                    <mxGeometry x="300" y="40" width="200" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="tx-graphql" value="&lt;b&gt;Transform&lt;/b&gt;: graphql_pacs_router&#xa;GraphQL enrichment + routing lookup" style="rounded=1;arcSize=20;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="300" y="160" width="200" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="tx-remap1" value="&lt;b&gt;Transform&lt;/b&gt;: Remap&#xa;Normalize and extract fields" style="rounded=1;arcSize=20;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="300" y="290" width="200" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="junct" value="" style="ellipse;aspect=fixed;html=1;fillColor=#000000;strokeColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="394" y="394" width="12" height="12" as="geometry"/>
+                </mxCell>
+                <mxCell id="tx-filter" value="&lt;b&gt;Filter&lt;/b&gt;&#xa;iot_things is empty OR&#xa;includes my thing name" style="rounded=1;arcSize=20;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="460" width="200" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="tx-strip" value="&lt;b&gt;Transform&lt;/b&gt;: Remap&#xa;1) Strip iot_things&#xa;2) . = .enrichedPayload" style="rounded=1;arcSize=20;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="600" width="200" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="sink-influx" value="InfluxDB" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="80" y="740" width="160" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="tx-clone" value="&lt;b&gt;Transform&lt;/b&gt;: Remap&#xa;Clone payload once&#xa;per targetThing" style="rounded=1;arcSize=20;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="540" y="460" width="200" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="sink-mqtt" value="MQTT" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;fontStyle=1;rotation=-90;" parent="1" vertex="1">
+                    <mxGeometry x="840" y="675" width="70" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="doc-input" value="{ &quot;externalDoorId&quot;: &quot;...&quot; }" style="shape=document;whiteSpace=wrap;html=1;boundedLbl=1;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontSize=9;align=left;" parent="1" vertex="1">
+                    <mxGeometry x="560" y="35" width="210" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="doc-graphql" value="{ &quot;orig_payload&quot;: { &quot;externalDoorId&quot;: &quot;...&quot; },&lt;br&gt;&quot;graphql_response&quot;: { ... } }" style="shape=document;whiteSpace=wrap;html=1;boundedLbl=1;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontSize=9;align=left;" parent="1" vertex="1">
+                    <mxGeometry x="560" y="155" width="210" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="doc-remap" value="{ &quot;enriched_payload&quot;: { &quot;externalDoorId&quot;: &quot;...&quot; },&lt;br&gt;&quot;iot_things&quot;: [...] }" style="shape=document;whiteSpace=wrap;html=1;boundedLbl=1;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontSize=9;align=left;" parent="1" vertex="1">
+                    <mxGeometry x="560" y="285" width="210" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="doc-clone" value="{ &quot;externalDoorId&quot;: &quot;...&quot;,&lt;br&gt;&quot;topic&quot;: &quot;dt/tailgating/{thing_name}/&quot; }" style="shape=document;whiteSpace=wrap;html=1;boundedLbl=1;fillColor=#f5f5f5;strokeColor=#666666;fontColor=#333333;fontSize=9;align=left;" parent="1" vertex="1">
+                    <mxGeometry x="820" y="530" width="210" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="note-failure" value="[!] Failure: drop event&#xa;(still written to Kinesis)" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#fff8e1;strokeColor=#f9a825;fontSize=9;align=left;" parent="1" vertex="1">
+                    <mxGeometry x="820" y="155" width="200" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="note-nodevice" value="[!] No edge device name in response:&#xa;drop event (still written to Kinesis)" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#fff8e1;strokeColor=#f9a825;fontSize=9;align=left;" parent="1" vertex="1">
+                    <mxGeometry x="820" y="285" width="200" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="note-createlist" value="Create list of unique targetThings&#xa;+ enrichment (in mqtt-forwarder)" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#fff8e1;strokeColor=#f9a825;fontSize=9;align=left;" parent="1" vertex="1">
+                    <mxGeometry x="820" y="460" width="200" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="note-encoding" value="encoding.except_fields = [&quot;topic&quot;]" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#fff8e1;strokeColor=#f9a825;fontSize=9;fontStyle=2;align=left;" parent="1" vertex="1">
+                    <mxGeometry x="825" y="625" width="200" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-src-graphql" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="src" target="tx-graphql" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-graphql-remap1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="tx-graphql" target="tx-remap1" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-remap1-junct" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="tx-remap1" target="junct" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-junct-filter" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="junct" target="tx-filter" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-junct-clone" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="junct" target="tx-clone" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-filter-strip" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="tx-filter" target="tx-strip" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-strip-influx" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="tx-strip" target="sink-influx" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e-clone-mqtt" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="tx-clone" target="sink-mqtt" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="d-src-doc" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;endArrow=none;startArrow=none;strokeColor=#aaaaaa;" parent="1" target="doc-input" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="400" y="130" as="sourcePoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="d-graphql-doc" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;endArrow=none;startArrow=none;strokeColor=#aaaaaa;" parent="1" target="doc-graphql" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="400" y="260" as="sourcePoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="d-remap1-doc" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;endArrow=none;startArrow=none;strokeColor=#aaaaaa;" parent="1" target="doc-remap" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="400" y="370" as="sourcePoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="d-mqtt-doc" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;endArrow=none;startArrow=none;strokeColor=#aaaaaa;" parent="1" target="doc-clone" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="640" y="560" as="sourcePoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="d-graphql-note" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;endArrow=none;startArrow=none;strokeColor=#f9a825;" parent="1" source="doc-graphql" target="note-failure" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="d-remap-note" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;endArrow=none;startArrow=none;strokeColor=#f9a825;" parent="1" source="doc-remap" target="note-nodevice" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="d-clone-note" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;endArrow=none;startArrow=none;strokeColor=#f9a825;" parent="1" source="tx-clone" target="note-createlist" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="d-mqtt-note" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;endArrow=none;startArrow=none;strokeColor=#f9a825;" parent="1" source="sink-mqtt" target="note-encoding" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>
